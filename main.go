@@ -152,6 +152,66 @@ func ExploreProcess() {
 	fmt.Println("reading or overwriting another program's data.")
 }
 
+// part-5
+func DoubleValue(x int) {
+	x = x * 2
+}
+
+func DoublePointer(x *int) {
+	*x = *x * 2
+}
+
+func CreateOnStack() int {
+	x := 42
+	return x
+}
+
+func CreateOnHeap() *int {
+	x := 42
+	return &x
+}
+
+// SwapValues swaps two values and returns them.
+func SwapValues(a, b int) (int, int) {
+	return b, a
+}
+
+// SwapPointers swaps the values that two pointers point to.
+func SwapPointers(a, b *int) {
+	temp := *a
+	*a = *b
+	*b = temp
+}
+
+// AnalyzeEscape calls the creation functions to trigger compiler analysis.
+func AnalyzeEscape() {
+	s := CreateOnStack()
+	h := CreateOnHeap()
+
+	fmt.Printf("Stack value: %d, Heap value pointer: %p\n", s, h)
+}
+
+/*
+ESCAPE ANALYSIS REPORT:
+1. Which variables escaped to the heap?
+   The variable 'x' inside CreateOnHeap() escaped to the heap. Depending on
+   compiler optimizations, the arguments passed to fmt.Printf (like 's' and 'h')
+   may also escape because they are passed to an interface{} parameter.
+
+2. Why did they escape?
+   In CreateOnHeap(), the function returns the memory address (&x) of a local
+   variable. If this variable remained on the stack, it would be invalidated
+   as soon as the function returned. To keep the data alive for the caller,
+   the Go compiler moves ('escapes') it to the heap.
+
+3. What does "escapes to heap" mean?
+   It means the compiler has decided to allocate the memory for a variable in
+   the dynamic heap storage rather than the function's local stack frame.
+   Stack memory is automatically reclaimed when a function ends, while heap
+   memory is managed by the Garbage Collector (GC) to ensure pointers
+   remain valid as long as they are being referenced.
+*/
+
 func main() {
 	fmt.Println("=== Part 4: Process Explorer ===")
 	ExploreProcess()

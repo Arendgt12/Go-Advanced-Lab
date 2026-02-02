@@ -320,3 +320,51 @@ func TestCompose(t *testing.T) {
 		})
 	}
 }
+
+// Part-5
+func TestSwapValues(t *testing.T) {
+	tests := []struct {
+		name  string
+		a, b  int
+		wantA int
+		wantB int
+	}{
+		{"swap small positives", 5, 10, 10, 5},
+		{"swap negatives", -1, -5, -5, -1},
+		{"swap zero", 0, 100, 100, 0},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotA, gotB := SwapValues(tt.a, tt.b)
+			if gotA != tt.wantA || gotB != tt.wantB {
+				t.Errorf("SwapValues(%d, %d) = (%d, %d); want (%d, %d)",
+					tt.a, tt.b, gotA, gotB, tt.wantA, tt.wantB)
+			}
+		})
+	}
+}
+
+func TestSwapPointers(t *testing.T) {
+	tests := []struct {
+		name  string
+		a, b  int
+		wantA int
+		wantB int
+	}{
+		{"swap by pointer basic", 1, 2, 2, 1},
+		{"swap identical values", 10, 10, 10, 10},
+		{"swap large values", 1000, 5000, 5000, 1000},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			valA, valB := tt.a, tt.b
+			SwapPointers(&valA, &valB)
+			if valA != tt.wantA || valB != tt.wantB {
+				t.Errorf("After SwapPointers, a=%d, b=%d; want a=%d, b=%d",
+					valA, valB, tt.wantA, tt.wantB)
+			}
+		})
+	}
+}
