@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"os"
 )
@@ -213,7 +214,79 @@ ESCAPE ANALYSIS REPORT:
 */
 
 func main() {
-	fmt.Println("=== Part 4: Process Explorer ===")
+	// 1. Process Information
+	fmt.Println("====== Process Information ======")
 	ExploreProcess()
+	fmt.Println()
 
+	// 2. Math Operations Demo
+	fmt.Println("====== Math Operations ======")
+	facts := []int{0, 5, 10}
+	for _, n := range facts {
+		res, err := Factorial(n)
+		if err != nil {
+			log.Printf("Error calculating factorial: %v", err)
+			continue
+		}
+		fmt.Printf("Factorial(%d) = %d\n", n, res)
+	}
+
+	primes := []int{17, 20, 25}
+	for _, n := range primes {
+		res, _ := IsPrime(n) // Simplified error handling for demo
+		fmt.Printf("IsPrime(%d) = %v\n", n, res)
+	}
+
+	p2_8, _ := Power(2, 8)
+	p5_3, _ := Power(5, 3)
+	fmt.Printf("Power(2, 8) = %d\n", p2_8)
+	fmt.Printf("Power(5, 3) = %d\n", p5_3)
+	fmt.Println()
+
+	// 3. Closure Demo
+	fmt.Println("====== Closure Demonstration ======")
+	c1 := MakeCounter(0)
+	c2 := MakeCounter(100)
+	fmt.Printf("Counter 1 (starts 0): %d, %d\n", c1(), c1())
+	fmt.Printf("Counter 2 (starts 100): %d, %d\n", c2(), c2())
+	fmt.Printf("Counter 1 (independent check): %d\n", c1())
+
+	doubler := MakeMultiplier(2)
+	tripler := MakeMultiplier(3)
+	val := 10
+	fmt.Printf("Multiplier: %d doubled is %d, tripled is %d\n", val, doubler(val), tripler(val))
+	fmt.Println()
+
+	// 4. Higher-Order Functions Demo
+	fmt.Println("====== Higher-Order Functions ======")
+	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	fmt.Printf("Original: %v\n", nums)
+
+	squared := Apply(nums, func(x int) int { return x * x })
+	fmt.Printf("Squared:  %v\n", squared)
+
+	evens := Filter(nums, func(x int) bool { return x%2 == 0 })
+	fmt.Printf("Evens:    %v\n", evens)
+
+	sum := Reduce(nums, 0, func(acc, curr int) int { return acc + curr })
+	fmt.Printf("Sum:      %d\n", sum)
+
+	doubleThenAdd10 := Compose(func(x int) int { return x + 10 }, doubler)
+	fmt.Printf("Compose (Double then +10) on 5: %d\n", doubleThenAdd10(5))
+	fmt.Println()
+
+	// 5. Pointer Demo
+	fmt.Println("====== Pointer Demonstration ======")
+	a, b := 5, 10
+	fmt.Printf("Before SwapValues: a=%d, b=%d\n", a, b)
+	sa, sb := SwapValues(a, b)
+	fmt.Printf("After SwapValues (Returned): a=%d, b=%d\n", sa, sb)
+	fmt.Printf("Originals after SwapValues:  a=%d, b=%d (unchanged)\n", a, b)
+
+	fmt.Printf("Before SwapPointers: a=%d, b=%d\n", a, b)
+	SwapPointers(&a, &b)
+	fmt.Printf("After SwapPointers:  a=%d, b=%d (modified!)\n", a, b)
+
+	fmt.Println("\n====== Escape Analysis Experiment ======")
+	AnalyzeEscape()
 }
