@@ -2,7 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"math"
+	"os"
 )
 
 // Part-1
@@ -125,6 +127,33 @@ func Compose(f func(int) int, g func(int) int) func(int) int {
 	}
 }
 
+// Part-4
+// Demonstrates process metadata and memory isolation.
+func ExploreProcess() {
+	//Get Process IDs
+	pid := os.Getpid()
+	ppid := os.Getppid()
+
+	fmt.Printf("Current Process ID: %d\n", pid)
+	fmt.Printf("Parent Process ID: %d\n", ppid)
+
+	//Create sample data
+	data := []int{1, 2, 3, 4, 5}
+
+	// Print memory addresses
+	fmt.Printf("Slice Header Address: %p\n", &data)
+	fmt.Printf("First Element Address: %p\n", &data[0])
+
+	// Explanation of Isolation
+	fmt.Println("\n--- Security Note ---")
+	fmt.Println("Other processes cannot access these memory addresses.")
+	fmt.Println("Each process operates in its own virtual address space,")
+	fmt.Println("preventing one program from accidentally (or maliciously)")
+	fmt.Println("reading or overwriting another program's data.")
+}
+
 func main() {
+	fmt.Println("=== Part 4: Process Explorer ===")
+	ExploreProcess()
 
 }
