@@ -93,3 +93,112 @@ func TestPower(t *testing.T) {
 		})
 	}
 }
+
+// Part-2
+func TestMakeCounter(t *testing.T) {
+	tests := []struct {
+		name       string
+		startValue int
+		increments int
+		want       int
+	}{
+		{name: "start at 0, increment 3 times", startValue: 0, increments: 3, want: 3},
+		{name: "start at 10, increment 1 time", startValue: 10, increments: 1, want: 11},
+		{name: "start at -5, increment 2 times", startValue: -5, increments: 2, want: -3},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			counter := MakeCounter(tt.startValue)
+			var got int
+			for i := 0; i < tt.increments; i++ {
+				got = counter()
+			}
+			if got != tt.want {
+				t.Errorf("%s: after %d increments got %d, want %d", tt.name, tt.increments, got, tt.want)
+			}
+		})
+	}
+
+	// Independence check
+	t.Run("counters are independent", func(t *testing.T) {
+		c1 := MakeCounter(0)
+		c2 := MakeCounter(0)
+		c1() // becomes 1
+		if c1Val, c2Val := c1(), c2(); c1Val == c2Val {
+			t.Errorf("expected independent counters, but both returned %d", c1Val)
+		}
+	})
+}
+
+func TestMakeMultiplier(t *testing.T) {
+	tests := []struct {
+		name   string
+		factor int
+		input  int
+		want   int
+	}{
+		{name: "double 5", factor: 2, input: 5, want: 10},
+		{name: "triple 10", factor: 3, input: 10, want: 30},
+		{name: "multiply by zero", factor: 0, input: 100, want: 0},
+		{name: "multiply by negative", factor: -2, input: 4, want: -8},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mult := MakeMultiplier(tt.factor)
+			if got := mult(tt.input); got != tt.want {
+				t.Errorf("%s: got %d, want %d", tt.name, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMakeAccumulator(t *testing.T) {
+	type op struct {
+		isAdd bool // true for add, false for subtract
+		val   int
+	}
+
+	tests := []struct {
+		name    string
+		initial int
+		ops     []op
+		want    int
+	}{
+		{
+			name:    "basic add and subtract",
+			initial: 100,
+			ops:     []op{{true, 50}, {false, 30}}, // 100 + 50 - 30
+			want:    120,
+		},
+		{
+			name:    "sequential additions",
+			initial: 0,
+			ops:     []op{{true, 10}, {true, 20}, {true, 30}},
+			want:    60,
+		},
+		{
+			name:    "result goes negative",
+			initial: 10,
+			ops:     []op{{false, 20}},
+			want:    -10,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			add, sub, get := MakeAccumulator(tt.initial)
+			for _, operation := range tt.ops {
+				if operation.isAdd {
+					add(operation.val)
+				} else {
+					sub(operation.val)
+				}
+			}
+			if got := get(); got != tt.want {
+				t.Errorf("%s: got %d, want %d", tt.name, got, tt.want)
+			}
+		})
+	}
+}

@@ -54,6 +54,40 @@ func Power(base, exponent int) (int, error) {
 	return result, nil
 }
 
+// Part-2
+// MakeCounter
+func MakeCounter(start int) func() int {
+	count := start
+	return func() int {
+		count++
+		return count
+	}
+}
+
+// MakeMultiplier
+func MakeMultiplier(factor int) func(int) int {
+	return func(input int) int {
+		return input * factor
+	}
+}
+
+// MakeAccumulator
+func MakeAccumulator(initial int) (add func(int), subtract func(int), get func() int) {
+	state := initial
+
+	add = func(n int) {
+		state += n
+	}
+	subtract = func(n int) {
+		state -= n
+	}
+	get = func() int {
+		return state
+	}
+
+	return add, subtract, get
+}
+
 func main() {
 
 }
